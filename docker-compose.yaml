@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mongodb_products:
+    image: mongo
+    container_name: mongodb_products
+    restart: always
+    ports:
+      - "27017:27017"
+  postgresql_orders:
+    image: postgres
+    container_name: postgresql_orders
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"

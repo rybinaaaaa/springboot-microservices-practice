@@ -1,0 +1,17 @@
+spring:
+  application.name: inventory-service
+
+  profiles:
+    active: develop
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+server:
+  port: 8082
