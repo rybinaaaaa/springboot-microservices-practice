@@ -22,7 +22,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
     private final Properties properties;
 
     @Transactional
@@ -41,7 +41,7 @@ public class OrderService {
                 .map(OrderLineItems::getSkuCode)
                 .toList();
 
-        InventoryResponse[] inventoryResponses = webClient.get()
+        InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
                 .uri(properties.getInventoryServicePath(),
                         uriBuilder -> uriBuilder.queryParam("sku_code", skuCodes).build())
                 .retrieve()

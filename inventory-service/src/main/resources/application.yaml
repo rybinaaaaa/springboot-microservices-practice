@@ -14,4 +14,8 @@ spring:
       ddl-auto: create-drop
 
 server:
-  port: 8082
+  port: 0 #peek one random free port
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
