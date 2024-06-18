@@ -1,14 +1,19 @@
 package com.rybina.order_service.service;
 
+import com.rybina.order_service.dto.InventoryResponse;
 import com.rybina.order_service.dto.OrderCreateDto;
 import com.rybina.order_service.dto.OrderLineItemsDto;
 import com.rybina.order_service.model.Order;
 import com.rybina.order_service.model.OrderLineItems;
 import com.rybina.order_service.repository.OrderRepository;
+import com.rybina.order_service.utils.Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -17,6 +22,8 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final WebClient webClient;
+    private final Properties properties;
 
     @Transactional
     public void save(OrderCreateDto orderCreateDto) {
@@ -28,7 +35,26 @@ public class OrderService {
                         .stream()
                         .map(this::toOrderLineItems).toList());
 
-        orderRepository.save(order);
+//        TODO: Call inventory service and save the order only if the product is un stock
+
+        List<String> skuCodes = order.getOrderLineItemsList().stream()
+                .map(OrderLineItems::getSkuCode)
+                .toList();
+
+        InventoryResponse[] inventoryResponses = webClient.get()
+                .uri(properties.getInventoryServicePath(),
+                        uriBuilder -> uriBuilder.queryParam("sku_code", skuCodes).build())
+                .retrieve()
+                .bodyToMono(InventoryResponse[].class) // to read the data from response
+                .block(); // to make synchronous connection
+
+        boolean areProductsInStock = Arrays.stream(inventoryResponses).allMatch(InventoryResponse::getInStock) && inventoryResponses.length == skuCodes.size();
+
+        if (areProductsInStock) {
+            orderRepository.save(order);
+        } else {
+            throw new IllegalArgumentException("Order is not in stock!");
+        }
     }
 
     private OrderLineItems toOrderLineItems(OrderLineItemsDto orderLineItemsDto) {
