@@ -5,10 +5,9 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/test
 
+server:
+  port: 0 #peek one random free port
 eureka:
   client:
     service-url:
-      default-zone: http://eureka:password@localhost:8761/eureka
-
-server:
-  port: 0
+      defaultZone: http://eureka:password@localhost:8761/eureka
