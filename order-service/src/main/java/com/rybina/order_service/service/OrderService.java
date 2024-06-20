@@ -26,7 +26,7 @@ public class OrderService {
     private final Properties properties;
 
     @Transactional
-    public void save(OrderCreateDto orderCreateDto) {
+    public String save(OrderCreateDto orderCreateDto) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -52,6 +52,7 @@ public class OrderService {
 
         if (areProductsInStock) {
             orderRepository.save(order);
+            return "Order has been successfully created";
         } else {
             throw new IllegalArgumentException("Order is not in stock!");
         }

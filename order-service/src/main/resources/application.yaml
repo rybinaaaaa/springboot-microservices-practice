@@ -16,4 +16,30 @@ server:
 eureka:
   client:
     service-url:
+#      http://some_username:some_password@localhost:8761/eureka
       defaultZone: http://eureka:password@localhost:8761/eureka
+
+management:
+  health.circuitbreakers.enabled: true
+  endpoints.web.exposure.include: "*"
+  endpoint.health.show-details: always
+
+#  Resilinece4j
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventory:
+        register-health-indicator: true #just activation
+        event-consumer-buffer-size: 10 #how many requests we buffer
+        sliding-window-type: COUNT_BASED #method by which we make a decision to open the circ breaker
+        sliding-window-size: 5 #count of last requests based on which we will make we would make a decision to open the circ breaker
+        failure-rate-threshold: 50 #50+ percent of last request should be failure to open the breaker
+        wait-duration-in-open-state.seconds: 5 #time of being in open-state
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+
+  timelimiter:
+    instances:
+      inventory:
+        timeout-duration.seconds: 3
+
