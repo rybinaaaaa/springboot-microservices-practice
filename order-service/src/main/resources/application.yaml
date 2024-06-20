@@ -43,3 +43,9 @@ resilience4j:
       inventory:
         timeout-duration.seconds: 3
 
+  retry:
+    instances:
+      inventory:
+        max-attempts: 3
+        wait-duration.seconds: 5
+
