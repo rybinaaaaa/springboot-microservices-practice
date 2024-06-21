@@ -34,10 +34,10 @@ public class InventoryService {
 
     @SneakyThrows
     public List<InventoryResponse> findBySkuCode(List<String> skuCodes) {
-//        EXAMPLE FOT TIMELIMITER
-        log.info("Wait started");
-        Thread.sleep(10000);
-        log.info("Wait ended");
+////        EXAMPLE FOT TIMELIMITER
+//        log.info("Wait started");
+//        Thread.sleep(10000);
+//        log.info("Wait ended");
         return inventoryRepository.findBySkuCodeIn(skuCodes)
                 .stream().map(InventoryService::getInventoryResponse).toList();
     }
